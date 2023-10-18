@@ -1,16 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Vite + Lit + TS</title>
+
     <link rel="stylesheet" href="./src/index.css" />
-    <script type="module" src="/src/my-element.ts"></script>
+
+    <script type="module" src="/src/lit-dropdown.ts"></script>
   </head>
   <body>
-    <my-element>
-      <h1>Vite + Lit</h1>
-    </my-element>
+    <lit-dropdown>
+      <span slot="name">Dropdown</span>
+    </lit-dropdown>
+    <script>
+      const litDropdown = document.querySelector("lit-dropdown");
+      litDropdown.elements = [
+        { value: "test" },
+        { value: "tests" },
+        { value: "tests" },
+        { value: "tests" },
+        { value: "tests" },
+        { value: "tests" },
+        { value: "tests" },
+        { value: "tests" },
+      ];
+    </script>
   </body>
 </html>
