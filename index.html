@@ -15,14 +15,14 @@
     <script type="module" src="/src/lit-dropdown.ts"></script>
   </head>
   <body>
-    <lit-dropdown>
+    <lit-dropdown horizontal-align="right" vertical-align="top">
       <span slot="name">Dropdown</span>
     </lit-dropdown>
     <script>
       const litDropdown = document.querySelector("lit-dropdown");
       litDropdown.elements = [
-        { value: "test" },
-        { value: "tests" },
+        { value: "el 1" },
+        { value: "i am something of a long item my self" },
         { value: "tests" },
         { value: "tests" },
         { value: "tests" },
@@ -30,6 +30,7 @@
         { value: "tests" },
         { value: "tests" },
       ];
+      litDropdown.addEventListener("elementclick", console.log);
     </script>
   </body>
 </html>

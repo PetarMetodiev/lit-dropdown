@@ -12,14 +12,36 @@ export class LitDropdown extends LitElement {
   @property()
   elements: ListElement[] = [];
 
-  @state()
-  isOpen: boolean = true;
+  @property({ attribute: "horizontal-align" })
+  align: "left" | "right" = "left";
 
-  constructor() {
-    super();
-    document.addEventListener("click", () => {
-      console.log("clicked");
+  @property({ attribute: "vertical-align" })
+  verticalAlign: "top" | "bottom" = "bottom";
+
+  @property()
+  disabled: boolean = false;
+
+  @state()
+  isOpen: boolean = false;
+
+  connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener("click", this._windowClickHandler.bind(this));
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener("click", this._windowClickHandler);
+  }
+
+  private _windowClickHandler(e: MouseEvent) {
+    const path = e.composedPath() as Element[];
+    const isInsideListContainer = path.some((p) => {
+      return p.nodeName?.toLowerCase().includes("lit-dropdown");
     });
+    if (!isInsideListContainer) {
+      this.isOpen = false;
+    }
   }
 
   render() {
@@ -28,13 +50,25 @@ export class LitDropdown extends LitElement {
         href="https://unpkg.com/css.gg@2.0.0/icons/css/arrow-down-r.css"
         rel="stylesheet"
       />
-      <button class="dropdown" @click="${this._showDropdown}">
+      <button
+        class="dropdown"
+        disabled=${this.disabled}
+        @click="${this._toggleDropdown}"
+      >
         <slot name="name"></slot>
         <i class="gg-arrow-down-r"></i>
       </button>
       ${this.isOpen
         ? html`
-            <ul class="list-container">
+            <ul
+              class=${classMap({
+                "list-container": true,
+                "left-align": this.align === "left",
+                "right-align": this.align === "right",
+                "bottom-align": this.verticalAlign === "bottom",
+                "top-align": this.verticalAlign === "top",
+              })}
+            >
               ${this.elements.map((e) => {
                 return html`
                   <li
@@ -43,7 +77,7 @@ export class LitDropdown extends LitElement {
                       "list-element": true,
                     })}
                   >
-                    <button @click=${() => this._toggleActiveState(e)}>
+                    <button @click=${() => this._handleElementClick(e)}>
                       ${e.value}
                     </button>
                   </li>
@@ -55,15 +89,20 @@ export class LitDropdown extends LitElement {
     `;
   }
 
-  private _showDropdown() {
-    console.log("showing dropdown");
-    console.log(this.elements);
+  private _toggleDropdown() {
     this.isOpen = !this.isOpen;
   }
 
-  private _toggleActiveState(e: ListElement) {
+  private _handleElementClick(e: ListElement) {
     this.elements.forEach((el) => (el.active = false));
     e.active = !e.active;
+    this.isOpen = false;
+
+    this.dispatchEvent(
+      new CustomEvent("elementclick", {
+        detail: e,
+      })
+    );
     this.requestUpdate();
   }
 
@@ -80,18 +119,24 @@ export class LitDropdown extends LitElement {
       position: relative;
     }
 
+    :host[disabled] {
+      opacity: 0.5;
+    }
+
     ::slotted(h1) {
     }
 
     button {
       border: none;
-      /* background-color: var(--primary); */
-      /* padding: 0.6em 1.2em; */
       font-size: inherit;
       font-weight: inherit;
       font-family: inherit;
       cursor: pointer;
       color: inherit;
+    }
+    button[disabled="true"] {
+      opacity: 0.5;
+      cursor: auto;
     }
 
     .dropdown {
@@ -111,11 +156,28 @@ export class LitDropdown extends LitElement {
       list-style-type: none;
       padding: 0.1rem 0;
       position: absolute;
-      top: calc(100% + 0.2em);
       border-radius: 0.5em;
-      left: 0;
+
       min-width: 100%;
       background-color: var(--secondary);
+
+      display: flex;
+    }
+
+    .list-container.left-align {
+      left: 0;
+    }
+    .list-container.right-align {
+      right: 0;
+    }
+
+    .list-container.top-align {
+      bottom: calc(100% + 0.2em);
+      flex-direction: column-reverse;
+    }
+    .list-container.bottom-align {
+      top: calc(100% + 0.2em);
+      flex-direction: column;
     }
 
     .list-container > * + * {
@@ -126,7 +188,7 @@ export class LitDropdown extends LitElement {
       border: none;
       border-radius: 1em;
       padding: 0.1em 0.3em;
-      /* background-color: var(--secondary); */
+      white-space: nowrap;
       color: var(--text);
     }
 
