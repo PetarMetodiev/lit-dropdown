@@ -58,7 +58,7 @@ export class LitDropdown extends LitElement {
       />
       <button
         class="dropdown"
-        disabled=${this.disabled}
+        ?disabled=${this.disabled}
         @click="${this._toggleDropdown}"
       >
         <slot name="name"></slot>
@@ -174,6 +174,10 @@ export class LitDropdown extends LitElement {
       background-color: var(--secondary);
 
       display: flex;
+
+      max-height: 20rem;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .list-container.left-align {
