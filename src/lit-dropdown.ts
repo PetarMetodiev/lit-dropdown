@@ -3,7 +3,8 @@ import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 type ListElement = {
-  value: string;
+  displayValue: string;
+  value: any;
   active: boolean;
 };
 
@@ -89,7 +90,7 @@ export class LitDropdown extends LitElement {
                     })}
                   >
                     <button @click=${() => this._handleElementClick(e)}>
-                      ${e.value}
+                      ${e.displayValue}
                     </button>
                   </li>
                 `;
@@ -111,7 +112,7 @@ export class LitDropdown extends LitElement {
 
     this.dispatchEvent(
       new CustomEvent("elementclick", {
-        detail: e,
+        detail: e.value,
       })
     );
     this.requestUpdate();
