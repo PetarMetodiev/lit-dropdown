@@ -111,7 +111,7 @@ export class LitDropdown extends LitElement {
     this.isOpen = false;
 
     this.dispatchEvent(
-      new CustomEvent("elementclick", {
+      new CustomEvent("select", {
         detail: e.value,
       })
     );
