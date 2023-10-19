@@ -1,5 +1,5 @@
-import { LitElement, css, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { LitElement, PropertyValues, css, html, nothing } from "lit";
+import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 type ListElement = {
@@ -22,7 +22,7 @@ export class LitDropdown extends LitElement {
   @property()
   disabled: boolean = false;
 
-  @state()
+  @property({ attribute: "is-open", reflect: true })
   isOpen: boolean = false;
 
   connectedCallback() {
@@ -33,6 +33,18 @@ export class LitDropdown extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener("click", this._windowClickHandler);
+  }
+
+  willUpdate(changedProperties: PropertyValues<this>) {
+    if (changedProperties.has("isOpen")) {
+      this.dispatchEvent(
+        new CustomEvent("toggle", {
+          detail: {
+            isOpen: this.isOpen,
+          },
+        })
+      );
+    }
   }
 
   private _windowClickHandler(e: MouseEvent) {
@@ -66,7 +78,6 @@ export class LitDropdown extends LitElement {
           class=${classMap({
             "gg-arrow-down-r": this.verticalAlign === "bottom",
             "gg-arrow-up-r": this.verticalAlign === "top",
-
           })}
         ></i>
       </button>
