@@ -47,6 +47,11 @@ export class LitDropdown extends LitElement {
   render() {
     return html`
       <link
+        href="https://unpkg.com/css.gg@2.0.0/icons/css/arrow-up-r.css"
+        rel="stylesheet"
+      />
+
+      <link
         href="https://unpkg.com/css.gg@2.0.0/icons/css/arrow-down-r.css"
         rel="stylesheet"
       />
@@ -56,7 +61,13 @@ export class LitDropdown extends LitElement {
         @click="${this._toggleDropdown}"
       >
         <slot name="name"></slot>
-        <i class="gg-arrow-down-r"></i>
+        <i
+          class=${classMap({
+            "gg-arrow-down-r": this.verticalAlign === "bottom",
+            "gg-arrow-up-r": this.verticalAlign === "top",
+
+          })}
+        ></i>
       </button>
       ${this.isOpen
         ? html`
@@ -146,7 +157,7 @@ export class LitDropdown extends LitElement {
       gap: 1em;
       padding: 0.3em 1em;
 
-      border-radius: 1em;
+      border-radius: 0.5em;
 
       background-color: var(--primary);
       color: var(--secondary);
@@ -186,7 +197,7 @@ export class LitDropdown extends LitElement {
 
     .list-element {
       border: none;
-      border-radius: 1em;
+      border-radius: 0.5em;
       padding: 0.1em 0.3em;
       white-space: nowrap;
       color: var(--text);
